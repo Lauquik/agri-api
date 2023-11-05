@@ -1,0 +1,73 @@
+syntax="proto3";
+
+package agriapi;
+
+option go_package=".././pb";
+
+
+message productattribs {
+    string name=1;
+    int32 price=2;
+    string description=3;
+    string weight=4;
+    int32 ratings=5;
+    int32 warranty=6;
+    string proudctid=7;
+}
+
+message productlist {
+    productattribs products=1;
+}
+
+message productid {
+    string productID=1;
+}
+
+message shopattribs{
+    string name=1;
+    string shopid=2;
+}
+
+message productshopres{
+    shopattribs shopAttribs=1;
+}
+
+message productlistreq {
+    bool serviceable=1;
+}
+
+service ProductService {
+    rpc GetProductList(productlistreq) returns (stream productlist);
+    rpc GetByProduct(productid)  returns (productshopres);
+}
+
+message coordinates {
+    float long=1;
+    float lat=2;
+}
+
+message shopcords {
+    coordinates shopCords=1;
+}
+
+message shopres{
+    shopattribs shopAttribs=1;
+}
+
+service ShopService {
+    rpc GetNearByShop(shopcords) returns(shopres);
+}
+
+message userreq {
+    string email=1;
+}
+
+message userres {
+    string name=1;
+    string email=2;
+    string shopid=3;
+}
+
+service UserService {
+    rpc GetNearestUser(userreq) returns(userres);
+}
