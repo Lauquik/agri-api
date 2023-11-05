@@ -1,23 +1,23 @@
 package grpcserver
 
 import (
+	"github.com/mongo-tut/pkg/handler"
 	"github.com/mongo-tut/pkg/pb"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Productlistserver struct {
 	pb.UnimplementedProductServiceServer
-	DB *mongo.Client
+	Productrepo *handler.ProductRepository
 }
 
 type Shopserver struct {
 	pb.UnimplementedShopServiceServer
-	DB *mongo.Client
+	Shoprepo *handler.ShopRepository
 }
 
 type UserServer struct {
 	pb.UnimplementedUserServiceServer
-	DB *mongo.Client
+	Userrepo *handler.UserRepository
 }
 
 // func main() {

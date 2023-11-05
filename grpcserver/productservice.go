@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/mongo-tut/internal/database"
-	"github.com/mongo-tut/pkg/handler"
 	"github.com/mongo-tut/pkg/pb"
 )
 
@@ -15,7 +14,7 @@ func (u *Productlistserver) AuthFuncOverride(ctx context.Context, fullMethodName
 
 func (p *Productlistserver) GetProductList(req *pb.Productlistreq, stream pb.ProductService_GetProductListServer) error {
 	var listproducts *[]database.Product
-	listproducts, err := handler.GetProductList(p.DB, req.Serviceable)
+	listproducts, err := p.Productrepo.Getproductlistodm(req.Serviceable)
 
 	if err != nil {
 		log.Fatal(err)
@@ -36,19 +35,4 @@ func (p *Productlistserver) GetProductList(req *pb.Productlistreq, stream pb.Pro
 		stream.Send(res)
 	}
 	return nil
-}
-
-func (p *Productlistserver) GetByProduct(ctx context.Context, req *pb.Productid) (*pb.Productshopres, error) {
-	var shop *database.Shop
-	shop, err := handler.GetByProduct(p.DB, req.ProductID)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	return &pb.Productshopres{
-		ShopAttribs: &pb.Shopattribs{
-			Name:   shop.Name,
-			Shopid: shop.ID.Hex(),
-		},
-	}, nil
 }

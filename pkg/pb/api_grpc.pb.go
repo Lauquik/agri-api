@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
 	GetProductList(ctx context.Context, in *Productlistreq, opts ...grpc.CallOption) (ProductService_GetProductListClient, error)
-	GetByProduct(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Productshopres, error)
 }
 
 type productServiceClient struct {
@@ -66,21 +65,11 @@ func (x *productServiceGetProductListClient) Recv() (*Productlist, error) {
 	return m, nil
 }
 
-func (c *productServiceClient) GetByProduct(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Productshopres, error) {
-	out := new(Productshopres)
-	err := c.cc.Invoke(ctx, "/agriapi.ProductService/GetByProduct", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
 type ProductServiceServer interface {
 	GetProductList(*Productlistreq, ProductService_GetProductListServer) error
-	GetByProduct(context.Context, *Productid) (*Productshopres, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -90,9 +79,6 @@ type UnimplementedProductServiceServer struct {
 
 func (UnimplementedProductServiceServer) GetProductList(*Productlistreq, ProductService_GetProductListServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetProductList not implemented")
-}
-func (UnimplementedProductServiceServer) GetByProduct(context.Context, *Productid) (*Productshopres, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetByProduct not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -128,36 +114,13 @@ func (x *productServiceGetProductListServer) Send(m *Productlist) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _ProductService_GetByProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Productid)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProductServiceServer).GetByProduct(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/agriapi.ProductService/GetByProduct",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).GetByProduct(ctx, req.(*Productid))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProductService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "agriapi.ProductService",
 	HandlerType: (*ProductServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetByProduct",
-			Handler:    _ProductService_GetByProduct_Handler,
-		},
-	},
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetProductList",
@@ -172,6 +135,7 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ShopServiceClient interface {
+	GetByProduct(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Productshopres, error)
 	GetNearByShop(ctx context.Context, in *Shopcords, opts ...grpc.CallOption) (*Shopres, error)
 }
 
@@ -181,6 +145,15 @@ type shopServiceClient struct {
 
 func NewShopServiceClient(cc grpc.ClientConnInterface) ShopServiceClient {
 	return &shopServiceClient{cc}
+}
+
+func (c *shopServiceClient) GetByProduct(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Productshopres, error) {
+	out := new(Productshopres)
+	err := c.cc.Invoke(ctx, "/agriapi.ShopService/GetByProduct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *shopServiceClient) GetNearByShop(ctx context.Context, in *Shopcords, opts ...grpc.CallOption) (*Shopres, error) {
@@ -196,6 +169,7 @@ func (c *shopServiceClient) GetNearByShop(ctx context.Context, in *Shopcords, op
 // All implementations must embed UnimplementedShopServiceServer
 // for forward compatibility
 type ShopServiceServer interface {
+	GetByProduct(context.Context, *Productid) (*Productshopres, error)
 	GetNearByShop(context.Context, *Shopcords) (*Shopres, error)
 	mustEmbedUnimplementedShopServiceServer()
 }
@@ -204,6 +178,9 @@ type ShopServiceServer interface {
 type UnimplementedShopServiceServer struct {
 }
 
+func (UnimplementedShopServiceServer) GetByProduct(context.Context, *Productid) (*Productshopres, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByProduct not implemented")
+}
 func (UnimplementedShopServiceServer) GetNearByShop(context.Context, *Shopcords) (*Shopres, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNearByShop not implemented")
 }
@@ -218,6 +195,24 @@ type UnsafeShopServiceServer interface {
 
 func RegisterShopServiceServer(s grpc.ServiceRegistrar, srv ShopServiceServer) {
 	s.RegisterService(&ShopService_ServiceDesc, srv)
+}
+
+func _ShopService_GetByProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Productid)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShopServiceServer).GetByProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/agriapi.ShopService/GetByProduct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShopServiceServer).GetByProduct(ctx, req.(*Productid))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ShopService_GetNearByShop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -245,6 +240,10 @@ var ShopService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "agriapi.ShopService",
 	HandlerType: (*ShopServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetByProduct",
+			Handler:    _ShopService_GetByProduct_Handler,
+		},
 		{
 			MethodName: "GetNearByShop",
 			Handler:    _ShopService_GetNearByShop_Handler,

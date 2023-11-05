@@ -2,9 +2,9 @@ package grpcserver
 
 import (
 	"context"
+	"log"
 
 	"github.com/mongo-tut/internal/database"
-	"github.com/mongo-tut/pkg/handler"
 	"github.com/mongo-tut/pkg/pb"
 )
 
@@ -15,7 +15,7 @@ func (u *Shopserver) AuthFuncOverride(ctx context.Context, fullMethodName string
 func (s *Shopserver) GetNearByShop(ctx context.Context, req *pb.Shopcords) (*pb.Shopres, error) {
 	var shop *database.Shop
 	var location []float64 = []float64{float64(req.ShopCords.Lat), float64(req.ShopCords.Long)}
-	shop, err := handler.GetByNearestShop(s.DB, &location)
+	shop, err := s.Shoprepo.GetByNearestShopodm(&location)
 	if err != nil {
 		panic(err)
 	}
@@ -26,4 +26,19 @@ func (s *Shopserver) GetNearByShop(ctx context.Context, req *pb.Shopcords) (*pb.
 		},
 	}, nil
 
+}
+
+func (p *Shopserver) GetByProduct(ctx context.Context, req *pb.Productid) (*pb.Productshopres, error) {
+	var shop *database.Shop
+	shop, err := p.Shoprepo.GetByProductodm(req.ProductID)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &pb.Productshopres{
+		ShopAttribs: &pb.Shopattribs{
+			Name:   shop.Name,
+			Shopid: shop.ID.Hex(),
+		},
+	}, nil
 }

@@ -19,13 +19,13 @@ func main() {
 
 	defer conn.Close()
 
-	productclint := pb.NewProductServiceClient(conn)
-	shopclient := pb.NewShopServiceClient(conn)
+	// productclint := pb.NewProductServiceClient(conn)
+	// shopclient := pb.NewShopServiceClient(conn)
 	userclient := pb.NewUserServiceClient(conn)
 
-	getproductlist(productclint, true)
-	getbyproduct(productclint, "6544ef432e4d3c394344d72a")
-	getnearstshop(shopclient, &[2]float32{12.9715987, 77.5945627})
+	// getproductlist(productclint, false)
+	// getbyproduct(shopclient, "6544ef432e4d3c394344d72a")
+	// getnearstshop(shopclient, &[2]float32{12.9715987, 77.5945627})
 	var email = "lavquik@gamil.com"
 	getnearestuser(userclient, &(email))
 
@@ -55,7 +55,7 @@ func getproductlist(client pb.ProductServiceClient, serviceable bool) {
 
 }
 
-func getbyproduct(client pb.ProductServiceClient, productID string) {
+func getbyproduct(client pb.ShopServiceClient, productID string) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	defer cancel()

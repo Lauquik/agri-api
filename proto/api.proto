@@ -38,7 +38,6 @@ message productlistreq {
 
 service ProductService {
     rpc GetProductList(productlistreq) returns (stream productlist);
-    rpc GetByProduct(productid)  returns (productshopres);
 }
 
 message coordinates {
@@ -55,6 +54,7 @@ message shopres{
 }
 
 service ShopService {
+    rpc GetByProduct(productid)  returns (productshopres);
     rpc GetNearByShop(shopcords) returns(shopres);
 }
 
