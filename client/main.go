@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/mongo-tut/pkg/pb"
+	"github.com/mongo-tut/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
